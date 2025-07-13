@@ -259,51 +259,25 @@ def parse_quiz_from_json(notes_text: str, key: str) -> list:
     except json.JSONDecodeError: return []
 
 
-# --- Core AI and Processing Functions (No changes here) ---
 def video_to_audio(video_URL: str):
     try:
-        # Clean up any existing audio file
         if os.path.exists("Target_audio.mp3"):
             os.remove("Target_audio.mp3")
-        
-        # Updated yt-dlp options with better error handling
+
+        # When deploying, ffmpeg is installed via packages.txt and is in the system's PATH.
+        # Therefore, we do NOT need to specify the ffmpeg_location.
         ydl_opts = {
             'format': 'bestaudio/best',
-            'outtmpl': 'Target_audio.%(ext)s',  # Let yt-dlp choose the extension
-            'postprocessors': [{
-                'key': 'FFmpegExtractAudio',
-                'preferredcodec': 'mp3',
-                'preferredquality': '192',
-            }],
-            'noplaylist': True,
-            'extractaudio': True,
-            'audioformat': 'mp3',
-            'quiet': False,  # Set to True to suppress output
-            'no_warnings': False,
+            'outtmpl': 'Target_audio',
+            'postprocessors': [{'key': 'FFmpegExtractAudio', 'preferredcodec': 'mp3'}],
+            # 'ffmpeg_location': FFMPEG_PATH, <-- REMOVE THIS LINE
+            'noplaylist': True
         }
-        
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-            # Extract info first to validate the URL
-            info = ydl.extract_info(video_URL, download=False)
-            if not info:
-                raise Exception("Could not extract video information")
-            
-            # Now download and extract audio
-            ydl.download([video_URL])
-        
-        # Verify the file was created
-        if not os.path.exists("Target_audio.mp3"):
-            raise Exception("Audio file was not created successfully")
-            
-        # Verify the file is not empty
-        if os.path.getsize("Target_audio.mp3") == 0:
-            raise Exception("Audio file is empty")
+            ydl.extract_info(video_URL, download=True)
             
     except Exception as e:
-        st.error(f"Error downloading video: {str(e)}", icon="🚫")
-        # Clean up any partially created files
-        if os.path.exists("Target_audio.mp3"):
-            os.remove("Target_audio.mp3")
+        st.error(f"Error downloading video: {e}", icon="🚫")
         st.stop()
 
 def audio_to_text(audio_path: str) -> str:
