@@ -9,7 +9,7 @@ from faster_whisper import WhisperModel
 from gtts import gTTS
 import yt_dlp
 from io import BytesIO
-from streamlit_ffmpeg import ffmpeg
+import ffmpeg
 
 
 # --- Page Configuration ---
@@ -267,10 +267,7 @@ def video_to_audio(video_URL: str):
         if os.path.exists("Target_audio.mp3"):
             os.remove("Target_audio.mp3")
         
-        # Get FFmpeg path from streamlit-ffmpeg
-        ffmpeg_path = ffmpeg.get_ffmpeg_exe()
-        
-        # Updated yt-dlp options with FFmpeg path
+        # Updated yt-dlp options (removed FFmpeg path)
         ydl_opts = {
             'format': 'bestaudio/best',
             'outtmpl': 'Target_audio.%(ext)s',
@@ -284,7 +281,7 @@ def video_to_audio(video_URL: str):
             'audioformat': 'mp3',
             'quiet': True,
             'no_warnings': True,
-            'ffmpeg_location': ffmpeg_path,  # Specify FFmpeg location
+            # Removed ffmpeg_location line
         }
         
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
