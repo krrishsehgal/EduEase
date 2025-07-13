@@ -8,8 +8,4 @@ gTTS
 Pillow
 graphviz
 yt-dlp
-streamlit-ffmpeg
-mdurl==0.1.2
-markdown-it-py==3.0.0
-rich==14.0.0
-pygments==2.19.2
+ffmpeg-python
