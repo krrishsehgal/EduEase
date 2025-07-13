@@ -9,8 +9,6 @@ from faster_whisper import WhisperModel
 from gtts import gTTS
 import yt_dlp
 from io import BytesIO
-import ffmpeg
-
 
 # --- Page Configuration ---
 st.set_page_config(page_title="EduEase", page_icon="🧠", layout="wide")
@@ -261,16 +259,17 @@ def parse_quiz_from_json(notes_text: str, key: str) -> list:
     except json.JSONDecodeError: return []
 
 
+# --- Core AI and Processing Functions (No changes here) ---
 def video_to_audio(video_URL: str):
     try:
         # Clean up any existing audio file
         if os.path.exists("Target_audio.mp3"):
             os.remove("Target_audio.mp3")
         
-        # Updated yt-dlp options (removed FFmpeg path)
+        # Updated yt-dlp options with better error handling
         ydl_opts = {
             'format': 'bestaudio/best',
-            'outtmpl': 'Target_audio.%(ext)s',
+            'outtmpl': 'Target_audio.%(ext)s',  # Let yt-dlp choose the extension
             'postprocessors': [{
                 'key': 'FFmpegExtractAudio',
                 'preferredcodec': 'mp3',
@@ -279,9 +278,8 @@ def video_to_audio(video_URL: str):
             'noplaylist': True,
             'extractaudio': True,
             'audioformat': 'mp3',
-            'quiet': True,
-            'no_warnings': True,
-            # Removed ffmpeg_location line
+            'quiet': False,  # Set to True to suppress output
+            'no_warnings': False,
         }
         
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
