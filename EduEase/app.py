@@ -9,6 +9,8 @@ from faster_whisper import WhisperModel
 from gtts import gTTS
 import yt_dlp
 from io import BytesIO
+from streamlit_ffmpeg import ffmpeg
+
 
 # --- Page Configuration ---
 st.set_page_config(page_title="EduEase", page_icon="🧠", layout="wide")
@@ -261,23 +263,52 @@ def parse_quiz_from_json(notes_text: str, key: str) -> list:
 
 def video_to_audio(video_URL: str):
     try:
+        # Clean up any existing audio file
         if os.path.exists("Target_audio.mp3"):
             os.remove("Target_audio.mp3")
-
-        # When deploying, ffmpeg is installed via packages.txt and is in the system's PATH.
-        # Therefore, we do NOT need to specify the ffmpeg_location.
+        
+        # Get FFmpeg path from streamlit-ffmpeg
+        ffmpeg_path = ffmpeg.get_ffmpeg_exe()
+        
+        # Updated yt-dlp options with FFmpeg path
         ydl_opts = {
             'format': 'bestaudio/best',
-            'outtmpl': 'Target_audio',
-            'postprocessors': [{'key': 'FFmpegExtractAudio', 'preferredcodec': 'mp3'}],
-            # 'ffmpeg_location': FFMPEG_PATH, <-- REMOVE THIS LINE
-            'noplaylist': True
+            'outtmpl': 'Target_audio.%(ext)s',
+            'postprocessors': [{
+                'key': 'FFmpegExtractAudio',
+                'preferredcodec': 'mp3',
+                'preferredquality': '192',
+            }],
+            'noplaylist': True,
+            'extractaudio': True,
+            'audioformat': 'mp3',
+            'quiet': True,
+            'no_warnings': True,
+            'ffmpeg_location': ffmpeg_path,  # Specify FFmpeg location
         }
+        
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-            ydl.extract_info(video_URL, download=True)
+            # Extract info first to validate the URL
+            info = ydl.extract_info(video_URL, download=False)
+            if not info:
+                raise Exception("Could not extract video information")
+            
+            # Now download and extract audio
+            ydl.download([video_URL])
+        
+        # Verify the file was created
+        if not os.path.exists("Target_audio.mp3"):
+            raise Exception("Audio file was not created successfully")
+            
+        # Verify the file is not empty
+        if os.path.getsize("Target_audio.mp3") == 0:
+            raise Exception("Audio file is empty")
             
     except Exception as e:
-        st.error(f"Error downloading video: {e}", icon="🚫")
+        st.error(f"Error downloading video: {str(e)}", icon="🚫")
+        # Clean up any partially created files
+        if os.path.exists("Target_audio.mp3"):
+            os.remove("Target_audio.mp3")
         st.stop()
 
 def audio_to_text(audio_path: str) -> str:
