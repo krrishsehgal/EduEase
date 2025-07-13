@@ -8,4 +8,4 @@ gTTS
 Pillow
 graphviz
 yt-dlp
-ffmpeg-python
+streamlit-ffmpeg
