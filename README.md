@@ -1,11 +1,8 @@
-
 # **EduEase 🧠✨**
 
 An AI-powered learning assistant that transforms dense educational YouTube videos into simple, accessible, and interactive study materials.
 
 EduEase is designed with a core mission: to make learning accessible for everyone, especially students with cognitive and attention-related disabilities like Dyslexia and ADHD. By leveraging a powerful suite of AI models, our app deconstructs long video lectures into notes that are easy to read, listen to, visualize, and test.
-
-
 
 ### **The Problem**
 
@@ -61,7 +58,6 @@ Image Generation: Stability AI API (Stable Diffusion) - Creates the visual summa
 
 Text-to-Speech: gTTS - A simple library for converting the generated notes into audio.
 
-
 ### Future Roadmap
 
 We believe EduEase is just the beginning. Future enhancements could include:
@@ -70,3 +66,4 @@ User Accounts & Progress Tracking: Allow users to save their notes and track the
 
 Deeper Personalization: Allow users to select their specific learning disability to receive even more tailored note formats and visual aids.
 
+helloololo
