@@ -70,5 +70,3 @@ User Accounts & Progress Tracking: Allow users to save their notes and track the
 
 Deeper Personalization: Allow users to select their specific learning disability to receive even more tailored note formats and visual aids.
 
-
-Hello World!
