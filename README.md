@@ -65,5 +65,3 @@ We believe EduEase is just the beginning. Future enhancements could include:
 User Accounts & Progress Tracking: Allow users to save their notes and track their flashcard performance over time using a Spaced Repetition System (SRS).
 
 Deeper Personalization: Allow users to select their specific learning disability to receive even more tailored note formats and visual aids.
-
-helloololo
